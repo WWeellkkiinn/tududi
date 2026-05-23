@@ -58,3 +58,9 @@ backend/tests/test-files/
 # Temporary files
 tmp/
 *.bak
+
+# 本地定制
+.env.local
+*.local.sqlite3
+backend/db/*.sqlite3
+docs/superpowers/
