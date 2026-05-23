@@ -3,19 +3,36 @@ const path = require('path');
 const { getConfig } = require('../config/config');
 const config = getConfig();
 
-let dbConfig;
+const dialect = process.env.DB_DIALECT || 'sqlite';
 
-dbConfig = {
-    dialect: 'sqlite',
-    storage: config.dbFile,
-    logging: config.environment === 'development' ? console.log : false,
-    define: {
-        timestamps: true,
-        underscored: true,
-        createdAt: 'created_at',
-        updatedAt: 'updated_at',
-    },
+const commonDefine = {
+    timestamps: true,
+    underscored: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
 };
+
+let dbConfig;
+if (dialect === 'postgres') {
+    dbConfig = {
+        dialect: 'postgres',
+        host: process.env.DB_HOST || 'localhost',
+        port: parseInt(process.env.DB_PORT || '5432', 10),
+        database: process.env.DB_NAME || 'tududi',
+        username: process.env.DB_USER || 'tududi',
+        password: process.env.DB_PASSWORD || '',
+        logging: config.environment === 'development' ? console.log : false,
+        define: commonDefine,
+        pool: { max: 10, min: 0, idle: 10000 },
+    };
+} else {
+    dbConfig = {
+        dialect: 'sqlite',
+        storage: config.dbFile,
+        logging: config.environment === 'development' ? console.log : false,
+        define: commonDefine,
+    };
+}
 
 const sequelize = new Sequelize(dbConfig);
 
