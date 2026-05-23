@@ -51,11 +51,17 @@ ENV APP_GID=1001
 RUN sed -i 's|dl-cdn.alpinelinux.org|mirrors.aliyun.com|g' /etc/apk/repositories
 
 # Install minimal runtime dependencies
+# Note: python3/make/g++ included so sqlite3 native binding can compile if
+# prebuild-install fails to fetch the prebuilt binary (common from China).
 RUN apk add --no-cache \
     bash \
     sqlite \
+    sqlite-dev \
     dumb-init \
-    su-exec && \
+    su-exec \
+    python3 \
+    make \
+    g++ && \
     rm -rf /tmp/* /var/cache/apk/*
 
 # Update npm to latest version
