@@ -4,6 +4,9 @@
 # Use Node.js Alpine for minimal build image
 FROM node:22-alpine AS builder
 
+# Speed up apk on China-hosted servers (mainland Aliyun ECS)
+RUN sed -i 's|dl-cdn.alpinelinux.org|mirrors.aliyun.com|g' /etc/apk/repositories
+
 RUN apk add --no-cache \
     python3 \
     make \
@@ -43,6 +46,9 @@ FROM node:22-alpine AS production
 
 ENV APP_UID=1001
 ENV APP_GID=1001
+
+# Speed up apk on China-hosted servers (mainland Aliyun ECS)
+RUN sed -i 's|dl-cdn.alpinelinux.org|mirrors.aliyun.com|g' /etc/apk/repositories
 
 # Install minimal runtime dependencies
 RUN apk add --no-cache \
